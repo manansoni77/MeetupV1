@@ -12,10 +12,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(current_dir,
 
 db.init_app(app)
 
+app.app_context().push()
+
 if not os.path.exists(os.path.join(current_dir, DB_NAME)):
     print(db.create_all())
-
-app.app_context().push()
 
 from app.routes import *
 
