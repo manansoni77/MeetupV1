@@ -8,6 +8,7 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 CORS(app)
+app.config['SECRET_KEY'] = 'secret'
 app.secret_key = app.config['SECRET_KEY']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(current_dir, DB_NAME)

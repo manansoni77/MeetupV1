@@ -19,13 +19,12 @@ def signup():
         db.session.commit()
         token = jwt.encode({'user_id': user.user_id, 'exp': datetime.utcnow()+timedelta(hours=1)},
                            app.config['SECRET_KEY'], 'HS256')
-        token = token.decode('utf-8')
-        return make_response(jsonify({'token': token}))
+        return make_response(jsonify({'token': token}), 200)
     except KeyError as e:
         print('keyerror, ', e)
     except Exception as e:
         print('Error, ', e)
-    return 500
+    return '', 500
 
 @app.route('/signin', methods=['POST'])
 def signin():
