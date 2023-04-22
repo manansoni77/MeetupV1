@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from flask import current_app as app, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.exc import IntegrityError
 from app.models import *
 
 @app.route('/')
@@ -21,7 +22,10 @@ def signup():
                            app.config['SECRET_KEY'], 'HS256')
         return make_response(jsonify({'token': token}), 200)
     except KeyError as e:
-        print('keyerror, ', e)
+        print('Key Error, ', e)
+    except IntegrityError as e:
+        db.session.rollback()
+        print('Integrity Error, ', e)
     except Exception as e:
         print('Error, ', e)
     return '', 500
