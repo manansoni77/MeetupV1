@@ -15,7 +15,7 @@ def signup():
     data = request.get_json()
     print(data)
     try:
-        user = User(name=data['name'], age=data['age'], username=data['username'], password=data['password'])
+        user = User(name=data['name'], age=data['age'], username=data['username'], password=generate_password_hash(data['password']))
         db.session.add(user)
         db.session.commit()
         token = jwt.encode({'user_id': user.user_id, 'exp': datetime.utcnow()+timedelta(hours=1)},
@@ -23,12 +23,14 @@ def signup():
         return make_response(jsonify({'token': token}), 200)
     except KeyError as e:
         print('Key Error, ', e)
+        return 'Key Error', 500
     except IntegrityError as e:
         db.session.rollback()
         print('Integrity Error, ', e)
+        return 'Integrity Error', 500
     except Exception as e:
         print('Error, ', e)
-    return '', 500
+        return 'Error', 500
 
 @app.route('/signin', methods=['POST'])
 def signin():
@@ -39,10 +41,10 @@ def signin():
     password = data['password']
     user = User.query.filter_by(username=username).first()
     if user:
+        print(user.password, password)
         if check_password_hash(user.password, password):
             token = jwt.encode({'user_id': user.user_id, 'exp': datetime.utcnow()+timedelta(hours=1)},
                                app.config['SECRET_KEY'], 'HS256')
-            token = token.decode('utf-8')
             return make_response(jsonify({"message": 'Logged In!', "token": token}), 201)
         else:
             return make_response(jsonify({"message": 'Wrong Password!'}), 202)
@@ -77,7 +79,7 @@ def book_event():
 
 @app.route('/list-events', methods=['GET'])
 @token_required
-def get_event():
+def get_event(user_id):
     print('list events')
     try:
         events = Event.query.all()
