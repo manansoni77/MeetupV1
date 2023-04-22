@@ -18,8 +18,8 @@ class User(db.Model):
     __tablename__ = 'User'
     user_id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    age = db.Column(db.Integer, nullable=True)
-    user_name = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    user_name = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
 
 class Event(db.Model, Serializer):
