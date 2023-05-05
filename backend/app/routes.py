@@ -4,10 +4,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from app.models import *
 
+def devres(result):
+    print(result)
+    return jsonify(result)
+
 @app.route('/')
 def index_page():
     print('Index Page')
-    return jsonify({'msg':'Hello!'})
+    return devres({'msg':'Hello!'})
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -20,7 +24,7 @@ def signup():
         db.session.commit()
         token = jwt.encode({'user_id': user.user_id, 'exp': datetime.utcnow()+timedelta(hours=1)},
                            app.config['SECRET_KEY'], 'HS256')
-        return make_response(jsonify({'token': token}), 200)
+        return make_response(devres({'token': token}), 200)
     except KeyError as e:
         print('Key Error, ', e)
         return 'Key Error', 500
@@ -45,11 +49,11 @@ def signin():
         if check_password_hash(user.password, password):
             token = jwt.encode({'user_id': user.user_id, 'exp': datetime.utcnow()+timedelta(hours=1)},
                                app.config['SECRET_KEY'], 'HS256')
-            return make_response(jsonify({"message": 'Logged In!', "token": token}), 201)
+            return make_response(devres({"message": 'Logged In!', "token": token}), 201)
         else:
-            return make_response(jsonify({"message": 'Wrong Password!'}), 202)
+            return make_response(devres({"message": 'Wrong Password!'}), 202)
     else:
-        return make_response(jsonify({"message": 'User Does Not Exist!'}), 203)
+        return make_response(devres({"message": 'User Does Not Exist!'}), 203)
 
 @app.route('/register/event',methods=['POST'])
 def register_event():
@@ -62,7 +66,7 @@ def register_event():
         db.session.commit()
     except KeyError as e:
         print('keyerror, ', e)
-    return jsonify('successful')
+    return devres('successful')
 
 @app.route('/book', methods=['POST'])
 def book_event():
@@ -75,7 +79,7 @@ def book_event():
         db.session.commit()
     except KeyError as e:
         print('keyerror, ', e)
-    return jsonify('successful')
+    return devres('successful')
 
 @app.route('/list-events', methods=['GET'])
 @token_required
@@ -83,7 +87,7 @@ def get_event(user_id):
     print('list events')
     try:
         events = Event.query.all()
-        return jsonify(Event.serialize_list(events))
+        return devres(Event.serialize_list(events))
     except Exception as e:
         print('error, ', e)
-        return jsonify('failure')
+        return devres('failure')
