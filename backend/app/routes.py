@@ -75,12 +75,13 @@ def register_event():
     return devres('successful')
 
 @app.route('/book', methods=['POST'])
+@token_required
 @handle_exceptions
-def book_event():
+def book_event(user_id):
     print('book event')
     data = request.get_json()
     print(data)
-    booking = Booking(user_id=data['user_id'], event_id=data['event_id'])
+    booking = Booking(user_id=user_id, event_id=data['event_id'])
     db.session.add(booking)
     db.session.commit()
     return devres('successful')
