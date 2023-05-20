@@ -1,11 +1,14 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Signup = () => {
   const [name, setName] = useState();
   const [age, setAge] = useState();
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+
+  const navigate = useNavigate();
 
   const fn = async () => {
     event.preventDefault();
@@ -25,6 +28,9 @@ export const Signup = () => {
     });
     if (res.status === 200) {
       console.log("successful");
+      const data = await res.json()
+      localStorage.setItem('token', data.token)
+      navigate("/");
     } else {
       console.log("failure");
     }

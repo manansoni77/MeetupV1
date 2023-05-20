@@ -1,9 +1,12 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Signin = () => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+
+  const navigate = useNavigate();
 
   const fn = async () => {
     event.preventDefault();
@@ -19,8 +22,12 @@ export const Signin = () => {
         password: password,
       }),
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       console.log("successful");
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isSignedIn", true)
+      navigate("/");
     } else {
       console.log("failure");
     }
